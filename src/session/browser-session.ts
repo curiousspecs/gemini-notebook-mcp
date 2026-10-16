@@ -581,6 +581,12 @@ export class BrowserSession {
       return null;
     };
 
+    // Google moved NotebookLM to notebook.google.com (2026-10): a backdrop modal
+    // can leave the textarea "visible" but unclickable. Dismiss before probing.
+    if (await this.page.$(".cdk-overlay-backdrop-showing").catch(() => null)) {
+      await this.page.keyboard.press("Escape").catch(() => undefined);
+      await randomDelay(300, 500);
+    }
     let hit = await tryFind();
     if (hit) {
       log.success(`  ✅ Found chat input: ${hit}`);
