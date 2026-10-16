@@ -49,7 +49,7 @@ This is the recommended path for end users. `npx` keeps the binary cached and se
 ### From source
 
 ```bash
-git clone https://github.com/PleasePrompto/gemini-notebook-mcp
+git clone https://github.com/curiousspecs/gemini-notebook-mcp
 cd gemini-notebook-mcp
 npm install
 npm run build

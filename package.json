@@ -30,11 +30,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PleasePrompto/gemini-notebook-mcp.git"
+    "url": "git+https://github.com/curiousspecs/gemini-notebook-mcp.git"
   },
-  "homepage": "https://github.com/PleasePrompto/gemini-notebook-mcp#readme",
+  "homepage": "https://github.com/curiousspecs/gemini-notebook-mcp#readme",
   "bugs": {
-    "url": "https://github.com/PleasePrompto/gemini-notebook-mcp/issues"
+    "url": "https://github.com/curiousspecs/gemini-notebook-mcp/issues"
   },
   "files": [
     "dist",
