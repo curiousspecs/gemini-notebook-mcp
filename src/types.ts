@@ -1,5 +1,5 @@
 /**
- * Global type definitions for NotebookLM MCP Server
+ * Global type definitions for Gemini Notebook MCP Server
  */
 
 /**
@@ -36,7 +36,7 @@ export interface AskQuestionResult {
    * influenceable) documents, not a deterministic retrieval result.
    */
   _provenance?: {
-    provider: "google-notebooklm";
+    provider: "google-gemini-notebook";
     model: "gemini-2.5";
     via: "chrome-automation";
     grounding: "user-uploaded-documents";

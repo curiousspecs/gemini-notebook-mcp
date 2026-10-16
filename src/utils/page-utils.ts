@@ -1,7 +1,7 @@
 /**
- * Page utilities for extracting prior answers from NotebookLM.
+ * Page utilities for extracting prior answers from Gemini Notebook.
  *
- * Streaming-stability detection has moved to `notebooklm/chat.ts`
+ * Streaming-stability detection has moved to `gemini-notebook/chat.ts`
  * (`waitForStableAnswer`, issue #43). The old `waitForLatestAnswer` here
  * polled `div.thinking-message`, which Google removed — calls timed out
  * even when the answer was already on screen. That logic is gone.

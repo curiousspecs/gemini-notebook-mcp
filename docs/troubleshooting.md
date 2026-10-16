@@ -11,9 +11,9 @@ Cause: System Chrome on macOS 26 (Tahoe) and certain Windows 11 setups crashes o
 Fix: Force the bundled Patchright Chromium.
 
 ```bash
-BROWSER_CHANNEL=chromium npx notebooklm-mcp@latest
+BROWSER_CHANNEL=chromium npx gemini-notebook-mcp@latest
 # or
-NOTEBOOKLM_BROWSER_CHANNEL=chromium npx notebooklm-mcp@latest
+GEMINI_NOTEBOOK_BROWSER_CHANNEL=chromium npx gemini-notebook-mcp@latest
 ```
 
 The fallback is also auto-applied when launch errors match the known patterns, but setting the env var explicitly makes the choice deterministic.
@@ -26,10 +26,10 @@ Checks:
 
 1. Confirm the answer wait is sufficient — long-form prompts on notebooks with many sources legitimately exceed 2 min.
    ```bash
-   ANSWER_TIMEOUT_MS=900000 npx notebooklm-mcp@latest   # 15 minutes
+   ANSWER_TIMEOUT_MS=900000 npx gemini-notebook-mcp@latest   # 15 minutes
    ```
    Or per-call: `browser_options.timeout_ms`.
-2. Run with a visible browser to see what NotebookLM is doing:
+2. Run with a visible browser to see what Gemini Notebook is doing:
    ```json
    { "name": "ask_question", "arguments": { "question": "...", "show_browser": true } }
    ```
@@ -38,7 +38,7 @@ Checks:
 
 ## Session expired / repeated login prompts
 
-Symptom: NotebookLM keeps redirecting to the login screen, or `get_health` reports `authenticated=false` after a previously successful login.
+Symptom: Gemini Notebook keeps redirecting to the login screen, or `get_health` reports `authenticated=false` after a previously successful login.
 
 Workflow:
 
@@ -70,21 +70,21 @@ Symptom: `setup_auth` fails on a server with no display because the login window
 Fix: Run the one-time setup under `xvfb-run`. After login the persistent Chrome profile lets every subsequent run go fully headless.
 
 ```bash
-xvfb-run -a npx notebooklm-mcp@latest
+xvfb-run -a npx gemini-notebook-mcp@latest
 # call setup_auth from your client, complete login, then exit
 # from then on, run normally:
-npx notebooklm-mcp@latest
+npx gemini-notebook-mcp@latest
 ```
 
-## "Unknown resource: mcp://notebooklm"
+## "Unknown resource: mcp://gemini-notebook"
 
 Cause: A client used the wrong URI scheme.
 
-Fix: The scheme is `notebooklm://`, not `mcp://`. Supported URIs:
+Fix: The scheme is `gemini-notebook://`, not `mcp://`. Supported URIs:
 
-- `notebooklm://library`
-- `notebooklm://library/{id}`
-- `notebooklm://metadata` (deprecated)
+- `gemini-notebook://library`
+- `gemini-notebook://library/{id}`
+- `gemini-notebook://metadata` (deprecated)
 
 The error message in v2 lists the correct set.
 
@@ -105,19 +105,19 @@ Cause: Another Chrome owns the base profile.
 Fix: The default `NOTEBOOK_PROFILE_STRATEGY=auto` falls back to an isolated per-instance profile. To force isolation always:
 
 ```bash
-NOTEBOOK_PROFILE_STRATEGY=isolated npx notebooklm-mcp@latest
+NOTEBOOK_PROFILE_STRATEGY=isolated npx gemini-notebook-mcp@latest
 ```
 
 ## Rate limit reached
 
-Symptom: `NotebookLM rate limit reached (50 queries/day for free accounts)`.
+Symptom: `Gemini Notebook rate limit reached (50 queries/day for free accounts)`.
 
 Options:
 
 - Use `re_auth` to switch to a different Google account.
 - Use multi-account mode for a clean separation:
   ```bash
-  NOTEBOOKLM_ACCOUNT=backup npx notebooklm-mcp@latest
+  GEMINI_NOTEBOOK_ACCOUNT=backup npx gemini-notebook-mcp@latest
   ```
 - Wait until the daily quota resets.
 - Upgrade to Google AI Pro/Ultra for higher limits.
@@ -127,9 +127,9 @@ Options:
 The default `160–240 WPM` range is realistic but slow for batch use. Either disable stealth typing or tighten the range:
 
 ```bash
-STEALTH_HUMAN_TYPING=false npx notebooklm-mcp@latest
+STEALTH_HUMAN_TYPING=false npx gemini-notebook-mcp@latest
 # or
-TYPING_WPM_MIN=400 TYPING_WPM_MAX=600 npx notebooklm-mcp@latest
+TYPING_WPM_MIN=400 TYPING_WPM_MAX=600 npx gemini-notebook-mcp@latest
 ```
 
 ## Citations are empty for `source_format=footnotes`
@@ -137,7 +137,7 @@ TYPING_WPM_MIN=400 TYPING_WPM_MAX=600 npx notebooklm-mcp@latest
 The DOM citation panel is read after the answer settles. If it is empty:
 
 - The notebook may not have grounded sources for that question.
-- The UI may have shifted — check the active selectors in `src/notebooklm/selectors.ts`.
+- The UI may have shifted — check the active selectors in `src/gemini-notebook/selectors.ts`.
 - Run with `show_browser=true` and inspect the live page after the answer renders.
 
 ## Follow-up reminder is missing
@@ -145,21 +145,21 @@ The DOM citation panel is read after the answer settles. If it is empty:
 In v2 the follow-up reminder appended to `ask_question` answers is off by default. Re-enable with:
 
 ```bash
-NOTEBOOKLM_FOLLOW_UP_REMINDER=true npx notebooklm-mcp@latest
+GEMINI_NOTEBOOK_FOLLOW_UP_REMINDER=true npx gemini-notebook-mcp@latest
 ```
 
 ## AI marker breaks downstream parsing
 
-The default answer text starts with `[AI-GENERATED via Gemini 2.5 (NotebookLM) — …]`. To return to the unprefixed answer, set:
+The default answer text starts with `[AI-GENERATED via Gemini 2.5 (Gemini Notebook) — …]`. To return to the unprefixed answer, set:
 
 ```bash
-NOTEBOOKLM_AI_MARKER=false npx notebooklm-mcp@latest
+GEMINI_NOTEBOOK_AI_MARKER=false npx gemini-notebook-mcp@latest
 ```
 
 Or replace the prefix with your own:
 
 ```bash
-NOTEBOOKLM_AI_MARKER_PREFIX="[notebooklm]" npx notebooklm-mcp@latest
+GEMINI_NOTEBOOK_AI_MARKER_PREFIX="[gemini-notebook]" npx gemini-notebook-mcp@latest
 ```
 
 The `_provenance` envelope on the result remains regardless.

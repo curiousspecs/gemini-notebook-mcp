@@ -1,7 +1,7 @@
 /**
  * Browser Session
  *
- * Represents a single browser session for NotebookLM interactions.
+ * Represents a single browser session for Gemini Notebook interactions.
  *
  * Features:
  * - Human-like question typing
@@ -18,17 +18,17 @@ import type { SharedContextManager } from "./shared-context-manager.js";
 import type { AuthManager } from "../auth/auth-manager.js";
 import { humanType, randomDelay } from "../utils/stealth-utils.js";
 import { snapshotAllResponses } from "../utils/page-utils.js";
-import { waitForStableAnswer, snapshotPriorAnswers } from "../notebooklm/chat.js";
+import { waitForStableAnswer, snapshotPriorAnswers } from "../gemini-notebook/chat.js";
 import {
   extractCitations as extractCitationsFromPage,
   type SourceFormat,
   type ExtractCitationsResult,
-} from "../notebooklm/citations.js";
+} from "../gemini-notebook/citations.js";
 import {
   addSource as addSourceToPage,
   type AddSourceInput,
   type AddSourceResult,
-} from "../notebooklm/sources.js";
+} from "../gemini-notebook/sources.js";
 import {
   generateAudioOverview as generateAudioOnPage,
   downloadAudioOverview as downloadAudioOnPage,
@@ -36,7 +36,7 @@ import {
   type GenerateAudioOptions,
   type AudioGenerationResult,
   type DownloadAudioResult,
-} from "../notebooklm/audio.js";
+} from "../gemini-notebook/audio.js";
 import { CONFIG } from "../config.js";
 import { log } from "../utils/logger.js";
 import type { SessionInfo, ProgressCallback } from "../types.js";
@@ -142,9 +142,9 @@ export class BrowserSession {
         log.info(`  ℹ️  No saved sessionStorage found (fresh session)`);
       }
 
-      // Wait for NotebookLM interface to load
-      log.info(`  ⏳ Waiting for NotebookLM interface...`);
-      await this.waitForNotebookLMReady();
+      // Wait for Gemini Notebook interface to load
+      log.info(`  ⏳ Waiting for Gemini Notebook interface...`);
+      await this.waitForGeminiNotebookReady();
 
       this.initialized = true;
       this.updateActivity();
@@ -160,16 +160,16 @@ export class BrowserSession {
   }
 
   /**
-   * Wait for NotebookLM interface to be ready
+   * Wait for Gemini Notebook interface to be ready
    *
    * IMPORTANT: Matches Python implementation EXACTLY!
    * - Uses SPECIFIC selectors (textarea.query-box-input)
    * - Checks ONLY for "visible" state (NOT disabled!)
-   * - NO placeholder checks (let NotebookLM handle that!)
+   * - NO placeholder checks (let Gemini Notebook handle that!)
    *
    * Based on Python _wait_for_ready() from browser_session.py:104-113
    */
-  private async waitForNotebookLMReady(): Promise<void> {
+  private async waitForGeminiNotebookReady(): Promise<void> {
     if (!this.page) {
       throw new Error("Page not initialized");
     }
@@ -192,9 +192,9 @@ export class BrowserSession {
         });
         log.success("  ✅ Chat input ready (fallback)!");
       } catch (error) {
-        log.error(`  ❌ NotebookLM interface not ready: ${error}`);
+        log.error(`  ❌ Gemini Notebook interface not ready: ${error}`);
         throw new Error(
-          "Could not find NotebookLM chat input. " +
+          "Could not find Gemini Notebook chat input. " +
             "Please ensure the notebook page has loaded correctly.",
           { cause: error }
         );
@@ -342,7 +342,7 @@ export class BrowserSession {
       return;
     }
 
-    log.info(`  ⏳ Waiting for NotebookLM origin before restoring sessionStorage...`);
+    log.info(`  ⏳ Waiting for Gemini Notebook origin before restoring sessionStorage...`);
 
     const handleNavigation = async () => {
       if (restored) {
@@ -358,7 +358,7 @@ export class BrowserSession {
   }
 
   /**
-   * Ask a question to NotebookLM
+   * Ask a question to Gemini Notebook
    */
   async ask(question: string, sendProgress?: ProgressCallback): Promise<string> {
     const askOnce = async (): Promise<string> => {
@@ -422,7 +422,7 @@ export class BrowserSession {
       // Timeout comes from CONFIG.answerTimeoutMs so users can tune it via
       // ANSWER_TIMEOUT_MS or browser_options.timeout_ms (issue #14, #27).
       log.info(`  ⏳ Waiting for response (streaming-stability)...`);
-      await sendProgress?.("Waiting for NotebookLM response (streaming-stability)...", 3, 5);
+      await sendProgress?.("Waiting for Gemini Notebook response (streaming-stability)...", 3, 5);
       const answer = await waitForStableAnswer(page, {
         question,
         timeoutMs: CONFIG.answerTimeoutMs,
@@ -431,14 +431,14 @@ export class BrowserSession {
       });
 
       if (!answer) {
-        throw new Error("Timeout waiting for response from NotebookLM");
+        throw new Error("Timeout waiting for response from Gemini Notebook");
       }
 
       // Check for rate limit errors AFTER receiving answer
       log.info(`  🔍 Checking for rate limit errors...`);
       if (await this.detectRateLimitError()) {
         throw new RateLimitError(
-          "NotebookLM rate limit reached (50 queries/day for free accounts)"
+          "Gemini Notebook rate limit reached (50 queries/day for free accounts)"
         );
       }
 
@@ -581,7 +581,7 @@ export class BrowserSession {
       return null;
     };
 
-    // Google moved NotebookLM to notebook.google.com (2026-10): a backdrop modal
+    // Google moved Gemini Notebook to notebook.google.com (2026-10): a backdrop modal
     // can leave the textarea "visible" but unclickable. Dismiss before probing.
     if (await this.page.$(".cdk-overlay-backdrop-showing").catch(() => null)) {
       await this.page.keyboard.press("Escape").catch(() => undefined);
@@ -648,7 +648,7 @@ export class BrowserSession {
    * Detect if a rate limit error occurred
    *
    * Searches the page for error messages indicating rate limit/quota exhaustion.
-   * Free NotebookLM accounts have 50 queries/day limit.
+   * Free Gemini Notebook accounts have 50 queries/day limit.
    *
    * @returns true if rate limit error detected, false otherwise
    */
@@ -705,7 +705,7 @@ export class BrowserSession {
       }
     }
 
-    // Also check if chat input is disabled (sometimes NotebookLM disables input when rate limited)
+    // Also check if chat input is disabled (sometimes Gemini Notebook disables input when rate limited)
     try {
       const inputSelector = "textarea.query-box-input";
       const input = await this.page.$(inputSelector);
@@ -755,7 +755,7 @@ export class BrowserSession {
       await randomDelay(2000, 3000);
 
       // Wait for interface to be ready again
-      await this.waitForNotebookLMReady();
+      await this.waitForGeminiNotebookReady();
 
       // Reset message count
       this.messageCount = 0;

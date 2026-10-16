@@ -1,7 +1,7 @@
 /**
- * NotebookLM Library Manager
+ * Gemini Notebook Library Manager
  *
- * Manages a persistent library of NotebookLM notebooks.
+ * Manages a persistent library of Gemini Notebook notebooks.
  * Allows Claude to autonomously add, remove, and switch between
  * multiple notebooks based on the task at hand.
  */

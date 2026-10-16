@@ -1,8 +1,8 @@
 /**
- * NotebookLM source ingestion (issue #25).
+ * Gemini Notebook source ingestion (issue #25).
  *
  * v2.0.0 supports the two source types that cover the bulk of real usage:
- *   - `url`  — paste a website URL (NotebookLM crawls and indexes it)
+ *   - `url`  — paste a website URL (Gemini Notebook crawls and indexes it)
  *   - `text` — paste raw text (treated as a copied document)
  *
  * File-upload, YouTube and Google-Drive ingestion are intentionally out of
@@ -10,7 +10,7 @@
  *
  * Robustness strategy (2026-05, ported from the Fork's content-manager.ts):
  *
- *   1. Capture the *expected notebook UUID* from the URL up-front. NotebookLM
+ *   1. Capture the *expected notebook UUID* from the URL up-front. Gemini Notebook
  *      sometimes redirects pasted-text uploads to a freshly-created notebook;
  *      we detect that and surface a clear error.
  *
@@ -38,7 +38,7 @@ export interface AddSourceInput {
   type: SourceType;
   /** URL when `type === "url"`, raw text when `type === "text"`. */
   content: string;
-  /** Optional title shown in the source list. NotebookLM uses a default if omitted. */
+  /** Optional title shown in the source list. Gemini Notebook uses a default if omitted. */
   title?: string;
 }
 
@@ -75,7 +75,7 @@ export async function addSource(page: Page, input: AddSourceInput): Promise<AddS
     // 5. Click the primary "Insert" / "Hinzufügen" button.
     await confirmInsert(page);
 
-    // 6. Wait for the dialog to animate away. NotebookLM doesn't append the
+    // 6. Wait for the dialog to animate away. Gemini Notebook doesn't append the
     //    new sidebar entry until the modal is fully gone.
     await waitForOverlayToClose(page);
 
@@ -95,7 +95,7 @@ export async function addSource(page: Page, input: AddSourceInput): Promise<AddS
           sourceCountBefore: before,
           sourceCountAfter: before,
           message:
-            `NotebookLM redirected to a different notebook (${currentUuid}) instead of ` +
+            `Gemini Notebook redirected to a different notebook (${currentUuid}) instead of ` +
             `the target (${expectedUuid}). This is a known quirk for pasted-text uploads — ` +
             `the source landed in a new "Untitled notebook".`,
         };
@@ -126,7 +126,7 @@ export async function addSource(page: Page, input: AddSourceInput): Promise<AddS
       message:
         errorText ||
         "Source dialog completed but the source list did not grow within 90 s. " +
-          "Either NotebookLM is still crawling/indexing or the upload silently failed.",
+          "Either Gemini Notebook is still crawling/indexing or the upload silently failed.",
     };
   } catch (err) {
     if (isRecoverable(err)) throw err;
@@ -271,7 +271,7 @@ async function fillSourceContent(page: Page, input: AddSourceInput): Promise<voi
   if (!target) {
     throw new Error(
       "Could not find an input field inside the Add-source overlay. " +
-        "NotebookLM UI may have changed — please file an issue."
+        "Gemini Notebook UI may have changed — please file an issue."
     );
   }
 
@@ -323,7 +323,7 @@ async function confirmInsert(page: Page): Promise<void> {
 }
 
 /**
- * Wait until the Add-source modal animates away. NotebookLM only appends the
+ * Wait until the Add-source modal animates away. Gemini Notebook only appends the
  * new sidebar entry once the modal is fully gone, so we *must* wait here.
  */
 async function waitForOverlayToClose(page: Page, timeoutMs: number = 30_000): Promise<void> {

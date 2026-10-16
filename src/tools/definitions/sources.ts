@@ -26,23 +26,23 @@ const sharedNotebookTargeting = {
   notebook_url: {
     type: "string",
     description:
-      "Direct NotebookLM URL — overrides `notebook_id`. Use for ad-hoc " +
+      "Direct Gemini Notebook URL — overrides `notebook_id`. Use for ad-hoc " +
       "notebooks not yet in your library. Format: " +
-      "`https://notebooklm.google.com/notebook/<uuid>`.",
+      "`https://notebook.google.com/notebook/<uuid>`.",
   },
 };
 
 export const addSourceTool: Tool = {
   name: "add_source",
   description:
-    "Ingest a source into a NotebookLM notebook. Supports two source types " +
+    "Ingest a source into a Gemini Notebook notebook. Supports two source types " +
     "in v2.0:\n" +
-    "  • `url` — NotebookLM crawls and indexes a website\n" +
+    "  • `url` — Gemini Notebook crawls and indexes a website\n" +
     "  • `text` — paste raw text (treated as a copied document)\n\n" +
     "File / YouTube / Google-Drive uploads are not yet implemented.\n\n" +
     "Returns `sourceCountBefore`/`sourceCountAfter` so the caller can verify " +
     "the new source landed. Call once per source — multiple sources require " +
-    "multiple calls. NotebookLM finishes indexing within 5–30 seconds; " +
+    "multiple calls. Gemini Notebook finishes indexing within 5–30 seconds; " +
     "subsequent `ask_question` calls then have the new source in context. " +
     "Free notebooks cap at 50 sources.\n\n" +
     "Known quirk: pasted-text uploads occasionally redirect to a freshly " +
@@ -62,12 +62,12 @@ export const addSourceTool: Tool = {
         type: "string",
         description:
           "When `type=url`: a fully-qualified URL (https://…). " +
-          "When `type=text`: the raw text body (any length up to NotebookLM's per-source word limit, ~500 k for free tier).",
+          "When `type=text`: the raw text body (any length up to Gemini Notebook's per-source word limit, ~500 k for free tier).",
       },
       title: {
         type: "string",
         description:
-          "Display title shown in the source list. Optional — NotebookLM " +
+          "Display title shown in the source list. Optional — Gemini Notebook " +
           "picks a sensible default (page title for URLs, first line for text). " +
           "For text sources, supplying a title is recommended for later " +
           "identification.",
@@ -106,7 +106,7 @@ export const generateAudioTool: Tool = {
     "Pass `wait_for_completion: true` for legacy synchronous behaviour " +
     "(blocks for up to `timeout_ms`). Audio Overview is the only Studio " +
     "output exposed in v2.0 (Video / Mindmap / Quiz / Infographic / " +
-    "Datatable / Presentation are NotebookLM features but not yet wrapped).",
+    "Datatable / Presentation are Gemini Notebook features but not yet wrapped).",
   inputSchema: {
     type: "object",
     properties: {
@@ -115,7 +115,7 @@ export const generateAudioTool: Tool = {
         description:
           "Optional focus prompt for the Audio Overview, e.g. \"Focus on the " +
           "API authentication flow and skip pricing\". Passed into the " +
-          "NotebookLM \"Customize\" sub-dialog before generation starts.",
+          "Gemini Notebook \"Customize\" sub-dialog before generation starts.",
       },
       wait_for_completion: {
         type: "boolean",
@@ -181,7 +181,7 @@ export const downloadAudioTool: Tool = {
     "condition:** `get_audio_status` must report `status: \"ready\"`. " +
     "Calling this before generation completes returns an error message " +
     "explaining what to do.\n\n" +
-    "The file lands in `destination_dir` with NotebookLM's suggested " +
+    "The file lands in `destination_dir` with Gemini Notebook's suggested " +
     "filename (sanitised — usually the audio's title with underscores). " +
     "The full saved path is returned in `result.filePath`.",
   inputSchema: {
@@ -191,7 +191,7 @@ export const downloadAudioTool: Tool = {
         type: "string",
         description:
           "Absolute directory path where the file is saved (created if " +
-          "missing). Example: `/Users/jane/Downloads/notebooklm` or " +
+          "missing). Example: `/Users/jane/Downloads/gemini-notebook` or " +
           "`/tmp/audio`. Relative paths are NOT recommended — the server " +
           "may run from a different working directory than the caller.",
       },

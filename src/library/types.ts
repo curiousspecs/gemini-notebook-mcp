@@ -1,7 +1,7 @@
 /**
- * NotebookLM Library Types
+ * Gemini Notebook Library Types
  *
- * Defines the structure for managing multiple NotebookLM notebooks
+ * Defines the structure for managing multiple Gemini Notebook notebooks
  * in a persistent library that Claude can manage autonomously.
  */
 
@@ -11,7 +11,7 @@
 export interface NotebookEntry {
   // Identification
   id: string; // Unique identifier (slug format, e.g., "n8n-docs")
-  url: string; // NotebookLM URL
+  url: string; // Gemini Notebook URL
   name: string; // Display name (e.g., "n8n Workflow Automation")
 
   // Metadata for Claude's autonomous decision-making
@@ -43,7 +43,7 @@ export interface Library {
  * Input for adding a new notebook
  */
 export interface AddNotebookInput {
-  url: string; // Required: NotebookLM URL
+  url: string; // Required: Gemini Notebook URL
   name: string; // Required: Display name
   description: string; // Required: What's in it
   topics: string[]; // Required: Topics covered

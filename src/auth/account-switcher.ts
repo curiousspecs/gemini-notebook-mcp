@@ -1,7 +1,7 @@
 /**
  * Lightweight multi-account support (issue #2).
  *
- * Each `--account <name>` (or `NOTEBOOKLM_ACCOUNT=<name>`) gets its own
+ * Each `--account <name>` (or `GEMINI_NOTEBOOK_ACCOUNT=<name>`) gets its own
  * Chrome profile directory under `<dataDir>/accounts/<slug>/`. Chrome's
  * persistent profile already isolates cookies/state per directory, which
  * is enough for the common case of "two Google accounts, different research
@@ -27,7 +27,7 @@ export function getRequestedAccount(argv: readonly string[] = process.argv): str
       return normalizeSlug(arg.slice("--account=".length));
     }
   }
-  const envValue = process.env.NOTEBOOKLM_ACCOUNT;
+  const envValue = process.env.GEMINI_NOTEBOOK_ACCOUNT;
   return envValue ? normalizeSlug(envValue) : null;
 }
 

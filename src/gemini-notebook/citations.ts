@@ -1,7 +1,7 @@
 /**
- * Citation extraction for NotebookLM answers (issue #20).
+ * Citation extraction for Gemini Notebook answers (issue #20).
  *
- * NotebookLM renders citation markers like `[1]`, `[2]` inside the answer and
+ * Gemini Notebook renders citation markers like `[1]`, `[2]` inside the answer and
  * — in a separate panel — the cited passage from the source document. v1
  * required the LLM to spell those out manually, which wasted tokens and was
  * unreliable. v2 reads the citations directly from the DOM after the answer
@@ -16,7 +16,7 @@
  *   3. Return structured `Citation[]` and a formatted variant of the answer
  *      according to the requested `SourceFormat`.
  *
- * All NotebookLM-facing CSS lives in the central selector registry, so a
+ * All Gemini Notebook-facing CSS lives in the central selector registry, so a
  * single UI change cannot break both this module and chat extraction.
  */
 

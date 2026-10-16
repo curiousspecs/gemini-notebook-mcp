@@ -16,14 +16,14 @@ Practical end-to-end walkthroughs against v2.0.0. Each section is a self-contain
 ### 1. Install and start
 
 ```bash
-npx notebooklm-mcp@latest
+npx gemini-notebook-mcp@latest
 ```
 
 Wire it into your MCP client of choice (see the [README](../README.md#connect-to-claude-code)).
 
 ### 2. Authenticate
 
-Call `setup_auth`. A Chrome window opens. Log in to the Google account that owns the NotebookLM notebooks you want to query. Close the browser when done.
+Call `setup_auth`. A Chrome window opens. Log in to the Google account that owns the Gemini Notebook notebooks you want to query. Close the browser when done.
 
 ```json
 { "name": "setup_auth", "arguments": {} }
@@ -39,13 +39,13 @@ Expect `"authenticated": true`.
 
 ### 3. Add a notebook to the local library
 
-Get a NotebookLM share-URL: open the notebook in `notebooklm.google.com`, click _Share → Anyone with the link → Copy link_. Then:
+Get a Gemini Notebook share-URL: open the notebook in `notebooklm.google.com`, click _Share → Anyone with the link → Copy link_. Then:
 
 ```json
 {
   "name": "add_notebook",
   "arguments": {
-    "url": "https://notebooklm.google.com/notebook/abcd-efgh",
+    "url": "https://notebook.google.com/notebook/abcd-efgh",
     "name": "n8n Documentation",
     "description": "n8n core docs + builtin nodes",
     "topics": ["workflow automation", "n8n", "node configuration"],
@@ -72,7 +72,7 @@ Capture `session_id` from the response — you will reuse it for follow-ups.
 
 ## Multi-turn session pattern
 
-Reusing `session_id` keeps NotebookLM's conversational context. The browser session also stays open, so each follow-up is faster.
+Reusing `session_id` keeps Gemini Notebook's conversational context. The browser session also stays open, so each follow-up is faster.
 
 ```json
 // 1. Open broad — captures session_id
@@ -180,7 +180,7 @@ Generation can take several minutes — keep `timeout_ms` generous. The default 
 {
   "name": "download_audio",
   "arguments": {
-    "destination_dir": "/Users/me/Downloads/notebooklm"
+    "destination_dir": "/Users/me/Downloads/gemini-notebook"
   }
 }
 ```
@@ -197,13 +197,13 @@ Run two parallel installations against different Google accounts:
 
 ```bash
 # Terminal A: work account
-npx notebooklm-mcp@latest --account work
+npx gemini-notebook-mcp@latest --account work
 
 # Terminal B: personal account
-npx notebooklm-mcp@latest --account personal
+npx gemini-notebook-mcp@latest --account personal
 ```
 
-Each account gets its own Chrome profile under `<dataDir>/accounts/<name>/`. The first run for a new account requires its own `setup_auth`. Switching is just a matter of starting the server with a different `--account` flag (or `NOTEBOOKLM_ACCOUNT` env).
+Each account gets its own Chrome profile under `<dataDir>/accounts/<name>/`. The first run for a new account requires its own `setup_auth`. Switching is just a matter of starting the server with a different `--account` flag (or `GEMINI_NOTEBOOK_ACCOUNT` env).
 
 Use cases:
 
@@ -219,7 +219,7 @@ There is no shared library between accounts — each account has its own `librar
 Start the server in HTTP mode:
 
 ```bash
-npx notebooklm-mcp@latest --transport http --port 3000 --host 0.0.0.0
+npx gemini-notebook-mcp@latest --transport http --port 3000 --host 0.0.0.0
 ```
 
 The two operations:

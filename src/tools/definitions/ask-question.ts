@@ -14,13 +14,13 @@ export function buildAskQuestionDescription(library: NotebookLibrary): string {
     const topics = getTopicsLine(active);
     const useCases = getUseCaseBullets(active);
 
-    return `# Conversational Research Partner (NotebookLM • Gemini 2.5 • Session RAG)
+    return `# Conversational Research Partner (Gemini Notebook • Gemini 2.5 • Session RAG)
 
 **Active Notebook:** ${active.name}
 **Content:** ${active.description}
 **Topics:** ${topics}
 
-> Auth tip: If login is required, use the prompt 'notebooklm.auth-setup' and then verify with the 'get_health' tool. If authentication later fails (e.g., expired cookies), use the prompt 'notebooklm.auth-repair'.
+> Auth tip: If login is required, use the prompt 'gemini-notebook.auth-setup' and then verify with the 'get_health' tool. If authentication later fails (e.g., expired cookies), use the prompt 'gemini-notebook.auth-repair'.
 
 ## What This Tool Is
 - Full conversational research with Gemini (LLM) grounded on your notebook sources
@@ -36,8 +36,8 @@ ${useCases}
 - Ask clarifying questions before implementing; do not guess missing details
 - If multiple notebooks could apply, propose the top 1–2 and ask which to use
 - If task context changes, ask to reset the session or switch notebooks
-- If authentication fails, use the prompts 'notebooklm.auth-repair' (or 'notebooklm.auth-setup') and verify with 'get_health'
-- After every NotebookLM answer: pause, compare with the user's goal, and only respond if you are 100% sure the information is complete. Otherwise, plan the next NotebookLM question in the same session.
+- If authentication fails, use the prompts 'gemini-notebook.auth-repair' (or 'gemini-notebook.auth-setup') and verify with 'get_health'
+- After every Gemini Notebook answer: pause, compare with the user's goal, and only respond if you are 100% sure the information is complete. Otherwise, plan the next Gemini Notebook question in the same session.
 
 ## Session Flow (Recommended)
 ${bt}${bt}${bt}javascript
@@ -60,7 +60,7 @@ ${bt}${bt}${bt}
 - For complex prompts, the host should issue follow-up calls:
   1. Implementation plan (APIs, dependencies, configuration, authentication).
   2. Pitfalls, gaps, validation steps, missing prerequisites.
-- Keep the same session_id for all follow-ups, review NotebookLM's answer, and ask more questions until the problem is fully resolved.
+- Keep the same session_id for all follow-ups, review Gemini Notebook's answer, and ask more questions until the problem is fully resolved.
 - Before replying to the user, double-check: do you truly have everything? If not, queue another ask_question immediately.
 
 ## 🔥 REAL EXAMPLE
@@ -97,17 +97,17 @@ ${bt}${bt}${bt}
 - Or set notebook_url for ad-hoc notebooks (not in library)
 - If ambiguous which notebook fits, ASK the user which to use`;
   } else {
-    return `# Conversational Research Partner (NotebookLM • Gemini 2.5 • Session RAG)
+    return `# Conversational Research Partner (Gemini Notebook • Gemini 2.5 • Session RAG)
 
 ## No Active Notebook
-- Visit https://notebooklm.google to create a notebook and get a share link
+- Visit https://gemini-notebook.google to create a notebook and get a share link
 - Use **add_notebook** to add it to your library (explains how to get the link)
 - Use **list_notebooks** to show available sources
 - Use **select_notebook** to set one active
 
-> Auth tip: If login is required, use the prompt 'notebooklm.auth-setup' and then verify with the 'get_health' tool. If authentication later fails (e.g., expired cookies), use the prompt 'notebooklm.auth-repair'.
+> Auth tip: If login is required, use the prompt 'gemini-notebook.auth-setup' and then verify with the 'get_health' tool. If authentication later fails (e.g., expired cookies), use the prompt 'gemini-notebook.auth-repair'.
 
-Tip: Tell the user you can manage NotebookLM library and ask which notebook to use for the current task.`;
+Tip: Tell the user you can manage Gemini Notebook library and ask which notebook to use for the current task.`;
   }
 }
 
@@ -121,7 +121,7 @@ export const askQuestionTool: Tool = {
       question: {
         type: "string",
         description:
-          "The question to ask NotebookLM. Plain natural language; can be " +
+          "The question to ask Gemini Notebook. Plain natural language; can be " +
           "multi-line. Gemini responds grounded on the notebook's sources.",
       },
       session_id: {
@@ -129,7 +129,7 @@ export const askQuestionTool: Tool = {
         description:
           "Reuse an existing browser session for follow-up questions. " +
           "Pass back the `session_id` returned in a prior `ask_question` " +
-          "response — NotebookLM keeps the prior conversation in context, " +
+          "response — Gemini Notebook keeps the prior conversation in context, " +
           "so follow-ups get sharper. Omit for a fresh session. " +
           "`list_sessions` enumerates live sessions.",
       },
@@ -142,9 +142,9 @@ export const askQuestionTool: Tool = {
       notebook_url: {
         type: "string",
         description:
-          "Direct NotebookLM URL — overrides `notebook_id`. Use for ad-hoc " +
+          "Direct Gemini Notebook URL — overrides `notebook_id`. Use for ad-hoc " +
           "queries against notebooks not yet in your library. Format: " +
-          "`https://notebooklm.google.com/notebook/<uuid>`.",
+          "`https://notebook.google.com/notebook/<uuid>`.",
       },
       source_format: {
         type: "string",
@@ -241,7 +241,7 @@ export const askQuestionTool: Tool = {
     required: ["question"],
   },
   annotations: {
-    title: "Ask NotebookLM (Gemini 2.5)",
+    title: "Ask Gemini Notebook (Gemini 2.5)",
     readOnlyHint: false,
     destructiveHint: false,
     idempotentHint: false,

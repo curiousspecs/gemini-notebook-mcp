@@ -24,30 +24,30 @@ supported.
 - **Citations on `ask_question`**: new `source_format` argument (`none`,
   `inline`, `footnotes`, `json`) populates a structured `sources[]` field
   by reading the DOM citation panel after the answer settles. Closes #20.
-- **Multi-account support** via `--account <name>` / `NOTEBOOKLM_ACCOUNT`.
+- **Multi-account support** via `--account <name>` / `GEMINI_NOTEBOOK_ACCOUNT`.
   Each account gets an isolated Chrome profile under
-  `~/.local/share/notebooklm-mcp/accounts/<name>/`. No credential storage —
+  `~/.local/share/gemini-notebook-mcp/accounts/<name>/`. No credential storage —
   authentication is still handled by Chrome's persistent profile. Closes #2.
 - **Bundled-Chromium fallback** (`BROWSER_CHANNEL=chromium` /
-  `NOTEBOOKLM_BROWSER_CHANNEL=chromium`). Used automatically when system
+  `GEMINI_NOTEBOOK_BROWSER_CHANNEL=chromium`). Used automatically when system
   Chrome refuses to launch. Closes #13 (macOS Tahoe), #19 (Windows exit 21).
 - **`ANSWER_TIMEOUT_MS`** env var + `browser_options.timeout_ms` parameter
   to override the answer wait. Default raised to 600 s. Closes #14, #27.
 - **Provenance envelope** on `ask_question` results: `_provenance` field +
-  AI-generated marker prefix (`NOTEBOOKLM_AI_MARKER=false` to opt out).
+  AI-generated marker prefix (`GEMINI_NOTEBOOK_AI_MARKER=false` to opt out).
   Closes #42.
 
 ### Changed
 
 - **Streaming-stability answer detection** replaces the broken
   `div.thinking-message` poll. Answers settle when the text is identical
-  across N consecutive 750 ms polls. Robust against the 2026 NotebookLM UI
+  across N consecutive 750 ms polls. Robust against the 2026 Gemini Notebook UI
   changes that broke v1.x. Closes #43.
-- **`FOLLOW_UP_REMINDER` is opt-in** via `NOTEBOOKLM_FOLLOW_UP_REMINDER=true`.
+- **`FOLLOW_UP_REMINDER` is opt-in** via `GEMINI_NOTEBOOK_FOLLOW_UP_REMINDER=true`.
   The previous default tripped prompt-injection guards on safety-trained
   host agents. Closes #28.
-- **Selector registry** (`src/notebooklm/selectors.ts`) is now the single
-  source of truth for every CSS / aria selector targeting NotebookLM. UI
+- **Selector registry** (`src/gemini-notebook/selectors.ts`) is now the single
+  source of truth for every CSS / aria selector targeting Gemini Notebook. UI
   changes from Google now require touching exactly one file.
 - **Browser-launch lifecycle** moved into a dedicated module with profile
   strategy fallback (`auto` → isolated profile when the base profile is
@@ -56,7 +56,7 @@ supported.
   periodic `page.evaluate(() => true)` health check. Defuses zombie tabs
   that previously turned the answer wait into a 100 % CPU spin. Closes #16.
 - **Resource error message** for unknown URIs now lists the supported set
-  (`notebooklm://library`, `notebooklm://library/{id}`, `notebooklm://metadata`).
+  (`gemini-notebook://library`, `gemini-notebook://library/{id}`, `gemini-notebook://metadata`).
   Closes #15.
 - **Library metadata accessors** in `src/library/metadata.ts` defend against
   notebooks loaded from disk that omit `topics`/`use_cases`/`content_types`.
@@ -83,9 +83,9 @@ supported.
 ### Migration Notes
 
 - v1 callers that depended on the old answer prefix should set
-  `NOTEBOOKLM_AI_MARKER=false` if they want the unprefixed answer back.
+  `GEMINI_NOTEBOOK_AI_MARKER=false` if they want the unprefixed answer back.
 - v1 callers that depended on the appended follow-up reminder must opt in
-  via `NOTEBOOKLM_FOLLOW_UP_REMINDER=true`.
+  via `GEMINI_NOTEBOOK_FOLLOW_UP_REMINDER=true`.
 - The default answer timeout grew from 120 s to 600 s. Lower it explicitly
   via `ANSWER_TIMEOUT_MS` if you relied on the 2-minute ceiling for
   fail-fast behaviour.
@@ -95,14 +95,14 @@ supported.
 ### Added
 - **Tool Profiles System** - Reduce token usage by loading only the tools you need
   - Three profiles: `minimal` (5 tools), `standard` (10 tools), `full` (16 tools)
-  - Persistent configuration via `~/.config/notebooklm-mcp/settings.json`
-  - Environment variable overrides: `NOTEBOOKLM_PROFILE`, `NOTEBOOKLM_DISABLED_TOOLS`
+  - Persistent configuration via `~/.config/gemini-notebook-mcp/settings.json`
+  - Environment variable overrides: `GEMINI_NOTEBOOK_PROFILE`, `GEMINI_NOTEBOOK_DISABLED_TOOLS`
 
 - **CLI Configuration Commands** - Easy profile management without editing files
-  - `npx notebooklm-mcp config get` - Show current configuration
-  - `npx notebooklm-mcp config set profile <name>` - Set profile (minimal/standard/full)
-  - `npx notebooklm-mcp config set disabled-tools <list>` - Disable specific tools
-  - `npx notebooklm-mcp config reset` - Reset to defaults
+  - `npx gemini-notebook-mcp config get` - Show current configuration
+  - `npx gemini-notebook-mcp config set profile <name>` - Set profile (minimal/standard/full)
+  - `npx gemini-notebook-mcp config set disabled-tools <list>` - Disable specific tools
+  - `npx gemini-notebook-mcp config reset` - Reset to defaults
 
 ### Changed
 - **Modularized Codebase** - Improved maintainability and code organization
@@ -119,13 +119,13 @@ supported.
   - Now waits for `div.thinking-message` element to disappear before reading answer
   - Removed unreliable text-based placeholder detection (`PLACEHOLDER_SNIPPETS`)
   - Answers like "Reviewing the content..." or "Looking for answers..." no longer returned prematurely
-  - Works reliably across all languages and NotebookLM UI changes
+  - Works reliably across all languages and Gemini Notebook UI changes
 
 ## [1.1.2] - 2025-10-19
 
 ### Changed
 - **README Documentation** - Added Claude Code Skill reference
-  - New badge linking to [notebooklm-skill](https://github.com/PleasePrompto/notebooklm-skill) repository
+  - New badge linking to [gemini-notebook-skill](https://github.com/PleasePrompto/gemini-notebook-skill) repository
   - Added prominent callout section explaining Claude Code Skill availability
   - Clarified differences between MCP server and Skill implementations
   - Added navigation link to Skill repository in top menu
@@ -149,8 +149,8 @@ supported.
 ## [1.1.0] - 2025-10-18
 
 ### Added
-- **Deep Cleanup Tool** - Comprehensive system cleanup for fresh NotebookLM MCP installations
-  - Scans entire system for ALL NotebookLM files (installation data, caches, logs, temp files)
+- **Deep Cleanup Tool** - Comprehensive system cleanup for fresh Gemini Notebook MCP installations
+  - Scans entire system for ALL Gemini Notebook files (installation data, caches, logs, temp files)
   - Finds hidden files in NPM cache, Claude CLI logs, editor logs, system trash, temp backups
   - Shows categorized preview before deletion with exact file list and sizes
   - Safe by design: Always requires explicit confirmation after preview
@@ -166,10 +166,10 @@ supported.
   - Settings passed as tool parameters (`browser_options`) or environment variables
   - Claude can now control ALL browser settings via tool parameters
   - `saveUserConfig()` and `loadUserConfig()` functions removed
-- **Unified Data Paths** - Consolidated from `notebooklm-mcp-nodejs` to `notebooklm-mcp`
-  - Linux: `~/.local/share/notebooklm-mcp/` (was: `notebooklm-mcp-nodejs`)
-  - macOS: `~/Library/Application Support/notebooklm-mcp/`
-  - Windows: `%LOCALAPPDATA%\notebooklm-mcp\`
+- **Unified Data Paths** - Consolidated from `gemini-notebook-mcp-nodejs` to `gemini-notebook-mcp`
+  - Linux: `~/.local/share/gemini-notebook-mcp/` (was: `gemini-notebook-mcp-nodejs`)
+  - macOS: `~/Library/Application Support/gemini-notebook-mcp/`
+  - Windows: `%LOCALAPPDATA%\gemini-notebook-mcp\`
   - Old paths automatically detected by cleanup tool
 - **Advanced Browser Options** - New `browser_options` parameter for browser-based tools
   - Control visibility, typing speed, stealth mode, timeouts, viewport size
@@ -181,8 +181,8 @@ supported.
 - **Default Viewport Size** - Changed from 1920x1080 to 1024x768
   - More reasonable default for most use cases
   - Can be overridden via `browser_options.viewport` parameter
-- Config directory (`~/.config/notebooklm-mcp/`) no longer created (not needed)
-- Improved logging for sessionStorage (NotebookLM does not use sessionStorage)
+- Config directory (`~/.config/gemini-notebook-mcp/`) no longer created (not needed)
+- Improved logging for sessionStorage (Gemini Notebook does not use sessionStorage)
 - README.md updated to reflect config-less architecture
 
 ### Fixed
@@ -190,7 +190,7 @@ supported.
   - All paths were incorrectly created with `-nodejs` suffix
   - Fix: Explicitly pass `{suffix: ""}` to disable default behavior
   - Affects: `config.ts` and `cleanup-manager.ts`
-  - Result: Correct paths now used (`notebooklm-mcp` instead of `notebooklm-mcp-nodejs`)
+  - Result: Correct paths now used (`gemini-notebook-mcp` instead of `gemini-notebook-mcp-nodejs`)
 - Enhanced cleanup tool to detect all legacy paths including manual installations
   - Added `getManualLegacyPaths()` method for comprehensive legacy file detection
   - Finds old config.json files across all platforms
@@ -216,7 +216,7 @@ supported.
     - Existing session is automatically closed and recreated with same session ID
     - Browser context is recreated with new visibility mode
     - Chat history is reset (message_count returns to 0)
-    - This is necessary because NotebookLM chat state is not persistent across browser restarts
+    - This is necessary because Gemini Notebook chat state is not persistent across browser restarts
   - **Files changed**: `src/tools/index.ts`, `src/session/shared-context-manager.ts`
 
 ### Removed
@@ -259,12 +259,12 @@ supported.
 
 ### Added
 - Initial release
-- NotebookLM integration via Model Context Protocol (MCP)
+- Gemini Notebook integration via Model Context Protocol (MCP)
 - Session-based conversations with Gemini 2.5
 - Source-grounded answers from notebook documents
 - Notebook library management system
 - Google authentication with persistent browser sessions
-- 16 MCP tools for comprehensive NotebookLM interaction
+- 16 MCP tools for comprehensive Gemini Notebook interaction
 - Support for Claude Code, Codex, Cursor, and other MCP clients
 - TypeScript implementation with full type safety
 - Playwright browser automation with stealth mode

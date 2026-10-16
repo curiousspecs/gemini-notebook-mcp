@@ -19,7 +19,7 @@ Ask a question against a notebook. Reuses an existing browser session when `sess
 | `question` | string | yes | The question to ask. |
 | `session_id` | string | no | Reuse an existing session for context. Omit to create a new one. |
 | `notebook_id` | string | no | Library notebook ID. Falls back to active notebook. |
-| `notebook_url` | string | no | Ad-hoc NotebookLM URL. Overrides `notebook_id`. |
+| `notebook_url` | string | no | Ad-hoc Gemini Notebook URL. Overrides `notebook_id`. |
 | `source_format` | `none` \| `inline` \| `footnotes` \| `json` | no | Citation rendering. Default `none`. |
 | `show_browser` | bool | no | Shorthand for `browser_options.show`. |
 | `browser_options` | object | no | Per-call browser overrides — see [`docs/configuration.md`](./configuration.md#per-call-browser-options). |
@@ -45,14 +45,14 @@ Ask a question against a notebook. Reuses an existing browser session when `sess
   "question": "How does the OAuth refresh token rotation work?",
   "answer": "[AI-GENERATED ...] The refresh token is rotated each ...\n\nSources:\n[1] auth-spec.pdf — ...",
   "session_id": "ses_…",
-  "notebook_url": "https://notebooklm.google.com/notebook/…",
+  "notebook_url": "https://notebook.google.com/notebook/…",
   "session_info": {
     "age_seconds": 12,
     "message_count": 3,
     "last_activity": "2026-04-30T12:00:00.000Z"
   },
   "_provenance": {
-    "provider": "google-notebooklm",
+    "provider": "google-gemini-notebook",
     "model": "gemini-2.5",
     "via": "chrome-automation",
     "grounding": "user-uploaded-documents",
@@ -79,7 +79,7 @@ Add a source to a notebook. v2 supports `type=url` (web crawl) and `type=text` (
 |---|---|---|---|
 | `type` | `url` \| `text` | yes | |
 | `content` | string | yes | URL when `type=url`, raw text when `type=text`. |
-| `title` | string | no | Optional display title. NotebookLM picks a default. |
+| `title` | string | no | Optional display title. Gemini Notebook picks a default. |
 | `session_id` | string | no | Reuse an existing browser session. |
 | `notebook_id` | string | no | Library notebook ID. |
 | `notebook_url` | string | no | Ad-hoc URL. Overrides `notebook_id`. |
@@ -171,7 +171,7 @@ Download the most recent Audio Overview to disk.
 {
   "name": "download_audio",
   "arguments": {
-    "destination_dir": "/Users/me/Downloads/notebooklm"
+    "destination_dir": "/Users/me/Downloads/gemini-notebook"
   }
 }
 ```
@@ -181,7 +181,7 @@ Download the most recent Audio Overview to disk.
 ```jsonc
 {
   "status": "success",
-  "file_path": "/Users/me/Downloads/notebooklm/overview-2026-04-30.wav",
+  "file_path": "/Users/me/Downloads/gemini-notebook/overview-2026-04-30.wav",
   "size_bytes": 9_412_000
 }
 ```
@@ -192,13 +192,13 @@ Run `generate_audio` first if no Audio Overview exists yet.
 
 ## add_notebook
 
-Add a NotebookLM share-URL to the local library. The tool description enforces a confirmation workflow on the host agent — do not call without explicit user consent.
+Add a Gemini Notebook share-URL to the local library. The tool description enforces a confirmation workflow on the host agent — do not call without explicit user consent.
 
 ### Parameters
 
 | Name | Type | Required | Notes |
 |---|---|---|---|
-| `url` | string | yes | NotebookLM share URL. |
+| `url` | string | yes | Gemini Notebook share URL. |
 | `name` | string | yes | Display name. |
 | `description` | string | yes | Short description of the notebook content. |
 | `topics` | string[] | yes | Topics covered. |
@@ -232,7 +232,7 @@ No parameters. Returns the full library.
     {
       "id": "nb_abcd",
       "name": "n8n Documentation",
-      "url": "https://notebooklm.google.com/notebook/…",
+      "url": "https://notebook.google.com/notebook/…",
       "description": "n8n core + builtin nodes",
       "topics": ["workflow automation", "n8n"],
       "use_cases": ["building n8n workflows"],
@@ -290,7 +290,7 @@ Returns the updated entry.
 
 ## remove_notebook
 
-Removes the entry from the local library only — does not delete the notebook in NotebookLM.
+Removes the entry from the local library only — does not delete the notebook in Gemini Notebook.
 
 | Name | Type | Required |
 |---|---|---|
@@ -391,7 +391,7 @@ Closes all sessions, deletes saved cookies + Chrome profile, opens a fresh login
 
 ## cleanup_data
 
-Categorised preview + delete of every NotebookLM MCP file the server can find on the system. Designed for fresh-start workflows.
+Categorised preview + delete of every Gemini Notebook MCP file the server can find on the system. Designed for fresh-start workflows.
 
 | Name | Type | Required | Notes |
 |---|---|---|---|
@@ -410,8 +410,8 @@ Workflow:
 
 | URI | Purpose |
 |---|---|
-| `notebooklm://library` | JSON view of the full library. |
-| `notebooklm://library/{id}` | One notebook by ID. The `{id}` template autocompletes from the library. |
-| `notebooklm://metadata` | Deprecated. Use `notebooklm://library` instead. |
+| `gemini-notebook://library` | JSON view of the full library. |
+| `gemini-notebook://library/{id}` | One notebook by ID. The `{id}` template autocompletes from the library. |
+| `gemini-notebook://metadata` | Deprecated. Use `gemini-notebook://library` instead. |
 
-The MCP server does not respond to `mcp://notebooklm` — that URI scheme never existed. Use `notebooklm://`.
+The MCP server does not respond to `mcp://gemini-notebook` — that URI scheme never existed. Use `gemini-notebook://`.

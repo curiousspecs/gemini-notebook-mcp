@@ -35,7 +35,7 @@ export class ResourceHandlers {
       };
       const resources: ResourceDescriptor[] = [
         {
-          uri: "notebooklm://library",
+          uri: "gemini-notebook://library",
           name: "Notebook Library",
           description:
             "Complete notebook library with all available knowledge sources. " +
@@ -50,7 +50,7 @@ export class ResourceHandlers {
       // Add individual notebook resources
       for (const notebook of notebooks) {
         resources.push({
-          uri: `notebooklm://library/${notebook.id}`,
+          uri: `gemini-notebook://library/${notebook.id}`,
           name: notebook.name,
           description:
             `${notebook.description} | Topics: ${notebook.topics.join(", ")} | ` +
@@ -63,11 +63,11 @@ export class ResourceHandlers {
       const active = this.library.getActiveNotebook();
       if (active) {
         resources.push({
-          uri: "notebooklm://metadata",
+          uri: "gemini-notebook://metadata",
           name: "Active Notebook Metadata (Legacy)",
           description:
             "Information about the currently active notebook. " +
-            "DEPRECATED: Use notebooklm://library instead for multi-notebook support. " +
+            "DEPRECATED: Use gemini-notebook://library instead for multi-notebook support. " +
             "⚠️ Always ask user permission before using notebooks for tasks they didn't explicitly mention.",
           mimeType: "application/json",
         });
@@ -83,7 +83,7 @@ export class ResourceHandlers {
       return {
         resourceTemplates: [
           {
-            uriTemplate: "notebooklm://library/{id}",
+            uriTemplate: "gemini-notebook://library/{id}",
             name: "Notebook by ID",
             description:
               "Access a specific notebook from your library by ID. " +
@@ -101,7 +101,7 @@ export class ResourceHandlers {
       log.info(`📖 [MCP] read_resource request: ${uri}`);
 
       // Handle library resource
-      if (uri === "notebooklm://library") {
+      if (uri === "gemini-notebook://library") {
         const notebooks = this.library.listNotebooks();
         const stats = this.library.getStats();
         const active = this.library.getActiveNotebook();
@@ -142,11 +142,11 @@ export class ResourceHandlers {
       }
 
       // Handle individual notebook resource
-      if (uri.startsWith("notebooklm://library/")) {
-        const prefix = "notebooklm://library/";
+      if (uri.startsWith("gemini-notebook://library/")) {
+        const prefix = "gemini-notebook://library/";
         const encodedId = uri.slice(prefix.length);
         if (!encodedId) {
-          throw new Error("Notebook resource requires an ID (e.g. notebooklm://library/{id})");
+          throw new Error("Notebook resource requires an ID (e.g. gemini-notebook://library/{id})");
         }
 
         let id: string;
@@ -180,11 +180,11 @@ export class ResourceHandlers {
       }
 
       // Legacy metadata resource (backwards compatibility)
-      if (uri === "notebooklm://metadata") {
+      if (uri === "gemini-notebook://metadata") {
         const active = this.library.getActiveNotebook();
 
         if (!active) {
-          throw new Error("No active notebook. Use notebooklm://library to see all notebooks.");
+          throw new Error("No active notebook. Use gemini-notebook://library to see all notebooks.");
         }
 
         const metadata = {
@@ -196,7 +196,7 @@ export class ResourceHandlers {
           notebook_id: active.id,
           last_used: active.last_used,
           use_count: active.use_count,
-          note: "DEPRECATED: Use notebooklm://library or notebooklm://library/{id} instead",
+          note: "DEPRECATED: Use gemini-notebook://library or gemini-notebook://library/{id} instead",
         };
 
         return {
@@ -211,10 +211,10 @@ export class ResourceHandlers {
       }
 
       // Helpful error so misconfigured clients (issue #15 — reporter requested
-      // `mcp://notebooklm`, which never existed) learn the supported URI scheme.
+      // `mcp://gemini-notebook`, which never existed) learn the supported URI scheme.
       throw new Error(
-        `Unknown resource: ${uri}. Supported URIs: notebooklm://library, ` +
-          "notebooklm://library/{id}, notebooklm://metadata. " +
+        `Unknown resource: ${uri}. Supported URIs: gemini-notebook://library, ` +
+          "gemini-notebook://library/{id}, gemini-notebook://metadata. " +
           "Call resources/list to discover the active set."
       );
     });
@@ -227,7 +227,7 @@ export class ResourceHandlers {
           // The MCP SDK types `ref` as a discriminated union; the resource
           // template branch carries `uri`. Narrow then resolve.
           const uri = ref.uri;
-          if (uri === "notebooklm://library/{id}" && argument.name === "id") {
+          if (uri === "gemini-notebook://library/{id}" && argument.name === "id") {
             const values = this.completeNotebookIds(argument.value);
             return this.buildCompletion(values);
           }

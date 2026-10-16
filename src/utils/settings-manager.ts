@@ -1,7 +1,7 @@
 /**
  * Settings Manager
  *
- * Handles persistent configuration for the NotebookLM MCP Server.
+ * Handles persistent configuration for the Gemini Notebook MCP Server.
  * Manages profiles, disabled tools, and environment variable overrides.
  */
 
@@ -100,9 +100,9 @@ export class SettingsManager {
    * Get effective configuration (merging File settings with Env Vars)
    */
   getEffectiveSettings(): Settings {
-    const envProfileRaw = process.env.NOTEBOOKLM_PROFILE;
+    const envProfileRaw = process.env.GEMINI_NOTEBOOK_PROFILE;
     const envProfile = isProfileName(envProfileRaw) ? envProfileRaw : undefined;
-    const envDisabled = process.env.NOTEBOOKLM_DISABLED_TOOLS;
+    const envDisabled = process.env.GEMINI_NOTEBOOK_DISABLED_TOOLS;
 
     const effectiveProfile = envProfile ?? this.settings.profile;
 

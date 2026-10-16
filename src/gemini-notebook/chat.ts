@@ -1,5 +1,5 @@
 /**
- * NotebookLM chat extraction with streaming-stability detection.
+ * Gemini Notebook chat extraction with streaming-stability detection.
  *
  * Replaces the legacy `waitForLatestAnswer()` (issue #43). Old logic gated on
  * `div.thinking-message`, which Google removed; calls timed out even though
@@ -20,10 +20,10 @@ import { Selectors } from "./selectors.js";
 import { isRecoverable, pageIsAlive, safeSleep } from "../browser/watchdog.js";
 
 /**
- * Loading-state phrases NotebookLM streams into the answer container before
+ * Loading-state phrases Gemini Notebook streams into the answer container before
  * the real response arrives. The stability detector would otherwise lock
  * onto these (they're "stable" while Gemini still thinks). Coverage spans
- * the eight major NotebookLM locales (EN, DE, FR, ES, PT, IT, NL, JA).
+ * the eight major Gemini Notebook locales (EN, DE, FR, ES, PT, IT, NL, JA).
  */
 const PLACEHOLDER_SNIPPETS = [
   // English
@@ -192,7 +192,7 @@ function isRateLimitText(text: string): boolean {
 }
 
 export interface AskOptions {
-  /** The question text — used to skip echo lines that NotebookLM mirrors back. */
+  /** The question text — used to skip echo lines that Gemini Notebook mirrors back. */
   question?: string;
   /** Hard ceiling on the wait. Default 600 000 ms (10 min) — overridable per call. */
   timeoutMs?: number;
@@ -322,7 +322,7 @@ async function readLatestAnswer(page: Page): Promise<string | null> {
 
 /**
  * Strip Material-icon labels (`more_vert`, `more_horiz`, …) and orphaned
- * citation markers that NotebookLM occasionally leaks into `innerText`.
+ * citation markers that Gemini Notebook occasionally leaks into `innerText`.
  * Only isolated lines are removed — never inline content — so legitimate
  * answer prose with the same words ("more horizontal") is not touched.
  */

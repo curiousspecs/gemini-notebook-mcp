@@ -1,5 +1,5 @@
 /**
- * Authentication Manager for NotebookLM
+ * Authentication Manager for Gemini Notebook
  *
  * Handles:
  * - Interactive login (headful browser for setup)
@@ -16,7 +16,7 @@ import type { BrowserContext, ElementHandle, Page } from "patchright";
 import fs from "fs/promises";
 import { existsSync } from "fs";
 import path from "path";
-import { CONFIG, NOTEBOOKLM_AUTH_URL } from "../config.js";
+import { CONFIG, GEMINI_NOTEBOOK_AUTH_URL } from "../config.js";
 import { log } from "../utils/logger.js";
 import {
   getPreferredChannel,
@@ -41,7 +41,7 @@ const CRITICAL_COOKIE_NAMES = [
   "APISID",
   "SAPISID", // API auth
   "OSID",
-  "__Secure-OSID", // NotebookLM-specific
+  "__Secure-OSID", // Gemini Notebook-specific
   "__Secure-1PSID",
   "__Secure-3PSID", // Secure variants
 ];
@@ -284,14 +284,14 @@ export class AuthManager {
     try {
       log.info("🌐 Opening Google login page...");
       log.warning("📝 Please login to your Google account");
-      log.warning("⏳ Browser will close automatically once you reach NotebookLM");
+      log.warning("⏳ Browser will close automatically once you reach Gemini Notebook");
       log.info("");
 
       // Progress: Navigating
       await sendProgress?.("Navigating to Google login...", 3, 10);
 
-      // Navigate to Google login (redirects to NotebookLM after auth)
-      await page.goto(NOTEBOOKLM_AUTH_URL, { timeout: 60000 });
+      // Navigate to Google login (redirects to Gemini Notebook after auth)
+      await page.goto(GEMINI_NOTEBOOK_AUTH_URL, { timeout: 60000 });
 
       // Progress: Waiting for login
       await sendProgress?.("Waiting for manual login (up to 10 minutes)...", 4, 10);
@@ -319,10 +319,10 @@ export class AuthManager {
             );
           }
 
-          // ✅ SIMPLE: Check if we're on NotebookLM (any path!)
+          // ✅ SIMPLE: Check if we're on Gemini Notebook (any path!)
           if (/^https:\/\/(notebooklm|notebook)\.google\.com\//.test(currentUrl)) {
-            await sendProgress?.("Login successful! NotebookLM detected!", 9, 10);
-            log.success("✅ Login successful! NotebookLM URL detected.");
+            await sendProgress?.("Login successful! Gemini Notebook detected!", 9, 10);
+            log.success("✅ Login successful! Gemini Notebook URL detected.");
             log.success(`✅ Current URL: ${currentUrl}`);
 
             // Short wait to ensure page is loaded
@@ -385,7 +385,7 @@ export class AuthManager {
     log.info(`  🌐 Navigating to Google login...`);
 
     try {
-      await page.goto(NOTEBOOKLM_AUTH_URL, {
+      await page.goto(GEMINI_NOTEBOOK_AUTH_URL, {
         waitUntil: "domcontentloaded",
         timeout: CONFIG.browserTimeout,
       });
@@ -397,7 +397,7 @@ export class AuthManager {
     const deadline = Date.now() + CONFIG.autoLoginTimeoutMs;
     log.info(`  ⏰ Auto-login timeout: ${CONFIG.autoLoginTimeoutMs / 1000}s`);
 
-    // Already on NotebookLM?
+    // Already on Gemini Notebook?
     log.info("  🔍 Checking if already authenticated...");
     if (await this.waitForNotebook(page, CONFIG.autoLoginTimeoutMs)) {
       log.success("✅ Already authenticated");
@@ -454,7 +454,7 @@ export class AuthManager {
     }
 
     // Wait for Google redirect after login
-    log.info("  🔄 Waiting for Google redirect to NotebookLM...");
+    log.info("  🔄 Waiting for Google redirect to Gemini Notebook...");
 
     if (await this.waitForRedirectAfterLogin(page, deadline)) {
       log.success("✅ Automatic login successful");
@@ -492,7 +492,7 @@ export class AuthManager {
         log.error(`  ❌ Stuck on Google accounts page: ${currentUrl.slice(0, 80)}...`);
       }
     } else if (/(notebooklm|notebook)\.google\.com/.test(currentUrl)) {
-      log.warning("  ⚠️  Reached NotebookLM but couldn't detect successful login");
+      log.warning("  ⚠️  Reached Gemini Notebook but couldn't detect successful login");
       log.info("  💡 This might be a timing issue - try again");
     } else {
       log.error(`  ❌ Unexpected page: ${currentUrl.slice(0, 80)}...`);
@@ -506,21 +506,21 @@ export class AuthManager {
   // ============================================================================
 
   /**
-   * Wait for Google to redirect to NotebookLM after successful login (SIMPLE & RELIABLE)
+   * Wait for Google to redirect to Gemini Notebook after successful login (SIMPLE & RELIABLE)
    *
    * Just checks if URL changes to notebooklm.google.com - no complex UI element searching!
    * Matches the simplified approach used in performLogin().
    */
   private async waitForRedirectAfterLogin(page: Page, deadline: number): Promise<boolean> {
-    log.info("    ⏳ Waiting for redirect to NotebookLM...");
+    log.info("    ⏳ Waiting for redirect to Gemini Notebook...");
 
     while (Date.now() < deadline) {
       try {
         const currentUrl = page.url();
 
-        // Simple check: Are we on NotebookLM?
+        // Simple check: Are we on Gemini Notebook?
         if (/^https:\/\/(notebooklm|notebook)\.google\.com\//.test(currentUrl)) {
-          log.success("    ✅ NotebookLM URL detected!");
+          log.success("    ✅ Gemini Notebook URL detected!");
           // Short wait to ensure page is loaded
           await page.waitForTimeout(2000);
           return true;
@@ -532,12 +532,12 @@ export class AuthManager {
       await page.waitForTimeout(500);
     }
 
-    log.error("    ❌ Redirect timeout - NotebookLM URL not reached");
+    log.error("    ❌ Redirect timeout - Gemini Notebook URL not reached");
     return false;
   }
 
   /**
-   * Wait for NotebookLM to load (SIMPLE & RELIABLE)
+   * Wait for Gemini Notebook to load (SIMPLE & RELIABLE)
    *
    * Just checks if URL starts with notebooklm.google.com - no complex UI element searching!
    * Matches the simplified approach used in performLogin().
@@ -549,9 +549,9 @@ export class AuthManager {
       try {
         const currentUrl = page.url();
 
-        // Simple check: Are we on NotebookLM?
+        // Simple check: Are we on Gemini Notebook?
         if (/^https:\/\/(notebooklm|notebook)\.google\.com\//.test(currentUrl)) {
-          log.success("  ✅ NotebookLM URL detected");
+          log.success("  ✅ Gemini Notebook URL detected");
           return true;
         }
       } catch {

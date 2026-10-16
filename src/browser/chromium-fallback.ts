@@ -10,7 +10,7 @@
  *     missing (issue #19).
  *
  * Patchright bundles its own Chromium build, which avoids both. We let users
- * pick explicitly via `BROWSER_CHANNEL` / `NOTEBOOKLM_BROWSER_CHANNEL` and
+ * pick explicitly via `BROWSER_CHANNEL` / `GEMINI_NOTEBOOK_BROWSER_CHANNEL` and
  * fall back to bundled Chromium if Chrome refuses to launch.
  */
 
@@ -32,7 +32,7 @@ const CHANNEL_FAILURE_PATTERNS: readonly RegExp[] = [
 ];
 
 export function getPreferredChannel(): BrowserChannel {
-  const raw = (process.env.NOTEBOOKLM_BROWSER_CHANNEL || process.env.BROWSER_CHANNEL || "")
+  const raw = (process.env.GEMINI_NOTEBOOK_BROWSER_CHANNEL || process.env.BROWSER_CHANNEL || "")
     .trim()
     .toLowerCase();
   if (raw === "chromium") return "chromium";

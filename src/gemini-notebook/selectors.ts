@@ -1,9 +1,9 @@
 /**
- * Central selector registry for the NotebookLM web UI.
+ * Central selector registry for the Gemini Notebook web UI.
  *
  * # Multilingual strategy
  *
- * Google ships NotebookLM in dozens of locales. Anchor priority:
+ * Google ships Gemini Notebook in dozens of locales. Anchor priority:
  *
  *   1. **Class names** (`.add-source-button`, `.single-source-container`,
  *      `.submit-button`, `.create-artifact-button-container`, …) — these
@@ -18,7 +18,7 @@
  *      no animation race.
  *
  *   4. **Locale-bound aria-labels and visible text** — last resort. Each
- *      list below covers the eight major NotebookLM locales:
+ *      list below covers the eight major Gemini Notebook locales:
  *      EN, DE, FR, ES, PT, IT, NL, JA. Adding more is mechanical; nothing
  *      breaks if a locale is missing because the class/icon anchors fire
  *      first.
@@ -68,7 +68,7 @@ export const Selectors = {
   },
 
   /**
-   * NotebookLM removed tabs in favour of a three-pane sidebar (2026 layout).
+   * Gemini Notebook removed tabs in favour of a three-pane sidebar (2026 layout).
    * These selectors are kept only for the rare legacy layouts.
    */
   tabs: {
@@ -294,7 +294,7 @@ export const Selectors = {
       'button[aria-label*="ダウンロード" i]',
     ],
     /**
-     * Completed Audio-Overview tile. Modern NotebookLM does NOT mount a real
+     * Completed Audio-Overview tile. Modern Gemini Notebook does NOT mount a real
      * `<audio>` element in the DOM; the player is a custom Angular tile
      * inside `.artifact-library-container > artifact-library-item`. The
      * play-button (`button.artifact-action-button` with locale-bound

@@ -13,8 +13,8 @@ import type {
   NotebookEntry,
   UpdateNotebookInput,
 } from "../library/types.js";
-import type { AddSourceResult } from "../notebooklm/sources.js";
-import type { AudioGenerationResult, DownloadAudioResult } from "../notebooklm/audio.js";
+import type { AddSourceResult } from "../gemini-notebook/sources.js";
+import type { AudioGenerationResult, DownloadAudioResult } from "../gemini-notebook/audio.js";
 import { CONFIG, applyBrowserOptions, type BrowserOptions } from "../config.js";
 import { log } from "../utils/logger.js";
 import type { AskQuestionResult, ToolResult, ProgressCallback } from "../types.js";
@@ -26,13 +26,13 @@ import { applyAiMarker, PROVENANCE } from "../utils/disclaimer.js";
  * Follow-up reminder appended to ask_question answers when explicitly enabled.
  * Off by default in v2 (issue #28) — the imperative phrasing reads like
  * adversarial prompt injection to safety-trained host agents and creates
- * noisy false positives. Opt back in via `NOTEBOOKLM_FOLLOW_UP_REMINDER=true`.
+ * noisy false positives. Opt back in via `GEMINI_NOTEBOOK_FOLLOW_UP_REMINDER=true`.
  */
 const FOLLOW_UP_REMINDER =
   "\n\nIs that all you need to know? You can always ask another question using the same session ID. Before you reply to the user, review their original request and this answer; if anything is still unclear or missing, ask another question first.";
 
 function followUpReminderEnabled(): boolean {
-  const raw = process.env.NOTEBOOKLM_FOLLOW_UP_REMINDER;
+  const raw = process.env.GEMINI_NOTEBOOK_FOLLOW_UP_REMINDER;
   if (raw === undefined) return false;
   const lower = raw.trim().toLowerCase();
   return lower === "true" || lower === "1" || lower === "yes";
@@ -141,7 +141,7 @@ export class ToolHandlers {
         );
 
         // Progress: Asking question
-        await sendProgress?.("Asking question to NotebookLM...", 2, 5);
+        await sendProgress?.("Asking question to Gemini Notebook...", 2, 5);
 
         // Ask the question (pass progress callback)
         const rawAnswer = await session.ask(question, sendProgress);
@@ -197,7 +197,7 @@ export class ToolHandlers {
         return {
           success: false,
           error:
-            "NotebookLM rate limit reached (50 queries/day for free accounts).\n\n" +
+            "Gemini Notebook rate limit reached (50 queries/day for free accounts).\n\n" +
             "You can:\n" +
             "1. Use the 're_auth' tool to login with a different Google account\n" +
             "2. Wait until tomorrow for the quota to reset\n" +
@@ -838,7 +838,7 @@ export class ToolHandlers {
   /**
    * Handle cleanup_data tool
    *
-   * ULTRATHINK Deep Cleanup - scans entire system for ALL NotebookLM MCP files
+   * ULTRATHINK Deep Cleanup - scans entire system for ALL Gemini Notebook MCP files
    */
   async handleCleanupData(args: { confirm: boolean; preserve_library?: boolean }): Promise<
     ToolResult<{

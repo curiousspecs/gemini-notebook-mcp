@@ -100,7 +100,7 @@ export class CliHandler {
 
   private printHelp(): void {
     console.log(`
-Usage: npx notebooklm-mcp config <command> [args]
+Usage: npx gemini-notebook-mcp config <command> [args]
 
 Commands:
   config get                       Show current configuration

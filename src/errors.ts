@@ -1,9 +1,9 @@
 /**
- * Custom Error Types for NotebookLM MCP Server
+ * Custom Error Types for Gemini Notebook MCP Server
  */
 
 /**
- * Error thrown when NotebookLM rate limit is exceeded
+ * Error thrown when Gemini Notebook rate limit is exceeded
  *
  * Free users have 50 queries/day limit.
  * This error indicates the user should:
@@ -13,7 +13,7 @@
  */
 export class RateLimitError extends Error {
   constructor(
-    message: string = "NotebookLM rate limit reached (50 queries/day for free accounts)"
+    message: string = "Gemini Notebook rate limit reached (50 queries/day for free accounts)"
   ) {
     super(message);
     this.name = "RateLimitError";
@@ -29,7 +29,7 @@ export class RateLimitError extends Error {
  * Error thrown when authentication fails
  *
  * This error can suggest cleanup workflow for persistent issues.
- * Especially useful when upgrading from old installation (notebooklm-mcp-nodejs).
+ * Especially useful when upgrading from old installation (gemini-notebook-mcp-nodejs).
  */
 export class AuthenticationError extends Error {
   suggestCleanup: boolean;

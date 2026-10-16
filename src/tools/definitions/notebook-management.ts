@@ -1,7 +1,7 @@
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 
 /**
- * Library tools — manage the local catalogue of NotebookLM notebooks the
+ * Library tools — manage the local catalogue of Gemini Notebook notebooks the
  * user has registered with this server. The cross-tool ID flow (where
  * `id` comes from, where it's used) lives in the server-level
  * `instructions` string.
@@ -10,11 +10,11 @@ export const notebookManagementTools: Tool[] = [
   {
     name: "add_notebook",
     description:
-      "Register a NotebookLM notebook in the local library so it can be " +
+      "Register a Gemini Notebook notebook in the local library so it can be " +
       "queried with `ask_question`, ingested into with `add_source`, etc.\n\n" +
       "## Required URL\n" +
-      "The user must supply a NotebookLM share-link. To produce one:\n" +
-      "  1. Open https://notebooklm.google\n" +
+      "The user must supply a Gemini Notebook share-link. To produce one:\n" +
+      "  1. Open https://gemini-notebook.google\n" +
       '  2. Open the notebook → click "Share" (top right)\n' +
       '  3. Set "Anyone with the link" → "Copy link"\n\n' +
       "## Permission workflow\n" +
@@ -33,8 +33,8 @@ export const notebookManagementTools: Tool[] = [
         url: {
           type: "string",
           description:
-            "NotebookLM share URL. Format: " +
-            "`https://notebooklm.google.com/notebook/<uuid>` (with optional " +
+            "Gemini Notebook share URL. Format: " +
+            "`https://notebook.google.com/notebook/<uuid>` (with optional " +
             "`?authuser=N` suffix).",
         },
         name: {
@@ -190,7 +190,7 @@ export const notebookManagementTools: Tool[] = [
         },
         url: {
           type: "string",
-          description: "New NotebookLM share URL (rarely needed).",
+          description: "New Gemini Notebook share URL (rarely needed).",
         },
       },
       required: ["id"],
@@ -207,7 +207,7 @@ export const notebookManagementTools: Tool[] = [
     name: "remove_notebook",
     description:
       "Remove a notebook from the local library. **Does NOT delete the " +
-      "actual NotebookLM notebook on Google's side** — only the local " +
+      "actual Gemini Notebook notebook on Google's side** — only the local " +
       "metadata entry. Active sessions on this notebook are closed.\n\n" +
       "Confirmation workflow: look up the notebook by id, ask the user " +
       "\"Remove '[name]' from your library?\" — only call after a clear yes.",

@@ -1,14 +1,14 @@
 /**
- * NotebookLM Audio Overview generation + download (issue #11).
+ * Gemini Notebook Audio Overview generation + download (issue #11).
  *
  * 2026-05 Studio UX (verified live in DE/EN locales):
  *   - The "Audio Overview" entry is a `<div role="button">` with a Material-
  *     Symbols `audio_magic_eraser` icon. *One click* on it kicks off
  *     generation; there is no separate "Generate" step unless the user
  *     opens the per-card "Anpassen" sub-dialog first.
- *   - While generating, NotebookLM shows a "Audio-Zusammenfassung wird … —
+ *   - While generating, Gemini Notebook shows a "Audio-Zusammenfassung wird … —
  *     Kommen Sie in ein paar Minuten wieder" tile with a spinner.
- *   - When generation completes, NotebookLM mounts an `artifact-library-item`
+ *   - When generation completes, Gemini Notebook mounts an `artifact-library-item`
  *     tile with a Play button (`button.artifact-action-button`, locale-bound
  *     aria-label "Wiedergeben"/"Play"/…) and a three-dot menu containing
  *     "Download" / "Herunterladen" / "Télécharger" / …. There is *no real*
@@ -168,7 +168,7 @@ async function audioIsReady(page: Page): Promise<boolean> {
 }
 
 /**
- * Detect a generation-in-progress tile. NotebookLM renders a tile with a
+ * Detect a generation-in-progress tile. Gemini Notebook renders a tile with a
  * spinner and a localised "come back in a few minutes" message while it
  * works. Coverage spans EN, DE, FR, ES, IT, PT, NL, JA.
  */
@@ -276,7 +276,7 @@ export interface DownloadAudioResult {
 export async function downloadAudioOverview(
   page: Page,
   destinationDir: string,
-  preferredFileName: string = "notebooklm-audio.wav"
+  preferredFileName: string = "gemini-notebook-audio.wav"
 ): Promise<DownloadAudioResult> {
   try {
     if (!(await audioIsReady(page))) {
@@ -331,6 +331,6 @@ async function clickFirstVisible(
   }
   throw new Error(
     `Could not find ${label} — selectors: ${selectors.join(" | ")}. ` +
-      "NotebookLM Studio UI may have changed."
+      "Gemini Notebook Studio UI may have changed."
   );
 }

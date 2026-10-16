@@ -1,5 +1,5 @@
 /**
- * Configuration for NotebookLM MCP Server
+ * Configuration for Gemini Notebook MCP Server
  *
  * Config Priority (highest to lowest):
  * 1. Hardcoded Defaults (works out of the box!)
@@ -14,28 +14,28 @@ import fs from "fs";
 import path from "path";
 
 // Cross-platform data paths (unified without -nodejs suffix)
-// Linux: ~/.local/share/notebooklm-mcp/
-// macOS: ~/Library/Application Support/notebooklm-mcp/
-// Windows: %APPDATA%\notebooklm-mcp\
+// Linux: ~/.local/share/gemini-notebook-mcp/
+// macOS: ~/Library/Application Support/gemini-notebook-mcp/
+// Windows: %APPDATA%\gemini-notebook-mcp\
 // IMPORTANT: Pass empty string suffix to disable envPaths' default '-nodejs' suffix!
-const paths = envPaths("notebooklm-mcp", { suffix: "" });
+const paths = envPaths("gemini-notebook-mcp", { suffix: "" });
 
 /**
- * Google NotebookLM Auth URL (used by setup_auth)
- * This is the base Google login URL that redirects to NotebookLM
+ * Google Gemini Notebook Auth URL (used by setup_auth)
+ * This is the base Google login URL that redirects to Gemini Notebook
  */
-export const NOTEBOOKLM_AUTH_URL =
+export const GEMINI_NOTEBOOK_AUTH_URL =
   "https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fnotebooklm.google.com%2F&flowName=GlifWebSignIn&flowEntry=ServiceLogin";
 
 export interface Config {
-  // NotebookLM - optional, used for legacy default notebook
+  // Gemini Notebook - optional, used for legacy default notebook
   notebookUrl: string;
 
   // Browser Settings
   headless: boolean;
   browserTimeout: number;
   /**
-   * Hard ceiling on the wait for a NotebookLM answer (issue #14 + #27).
+   * Hard ceiling on the wait for a Gemini Notebook answer (issue #14 + #27).
    * Long-form queries on notebooks with many sources legitimately exceed
    * 2 min. Overridable via `ANSWER_TIMEOUT_MS` env or per-call via
    * `browser_options.timeout_ms`.
@@ -89,14 +89,14 @@ export interface Config {
  * Default Configuration (works out of the box!)
  */
 const DEFAULTS: Config = {
-  // NotebookLM
+  // Gemini Notebook
   notebookUrl: "",
 
   // Browser Settings
   headless: true,
   browserTimeout: 30000,
   answerTimeoutMs: 600000, // 10 minutes — was hardcoded 120 s (issue #14)
-  // CRITICAL: NotebookLM switches to a tab-based mobile layout below
+  // CRITICAL: Gemini Notebook switches to a tab-based mobile layout below
   // ~1280px. The Studio panel is then offscreen on a non-active tab and
   // selectors that rely on `isVisible()` falsely report "not started".
   // Use a desktop-class viewport so the three-pane layout always renders.

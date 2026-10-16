@@ -1,7 +1,7 @@
 /**
  * Session Manager
  *
- * Manages multiple parallel browser sessions for NotebookLM API
+ * Manages multiple parallel browser sessions for Gemini Notebook API
  *
  * Features:
  * - Session lifecycle management
