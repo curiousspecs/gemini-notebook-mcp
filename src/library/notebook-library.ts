@@ -10,6 +10,7 @@ import fs from "fs";
 import path from "path";
 import { CONFIG } from "../config.js";
 import { log } from "../utils/logger.js";
+import { assertNotebookUrl } from "../gemini-notebook/url.js";
 import type {
   NotebookEntry,
   Library,
@@ -139,13 +140,16 @@ export class NotebookLibrary {
   addNotebook(input: AddNotebookInput): NotebookEntry {
     log.info(`📝 Adding notebook: ${input.name}`);
 
+    // Reject anything that is not a real notebook URL before it is stored
+    const url = assertNotebookUrl(input.url);
+
     // Generate ID
     const id = this.generateId(input.name);
 
     // Create entry
     const notebook: NotebookEntry = {
       id,
-      url: input.url,
+      url,
       name: input.name,
       description: input.description,
       topics: input.topics,
@@ -237,6 +241,8 @@ export class NotebookLibrary {
 
     log.info(`📝 Updating notebook: ${input.id}`);
 
+    const newUrl = input.url ? assertNotebookUrl(input.url) : undefined;
+
     const updated = { ...this.library };
     const index = updated.notebooks.findIndex((n) => n.id === input.id);
 
@@ -248,7 +254,7 @@ export class NotebookLibrary {
       ...(input.content_types && { content_types: input.content_types }),
       ...(input.use_cases && { use_cases: input.use_cases }),
       ...(input.tags && { tags: input.tags }),
-      ...(input.url && { url: input.url }),
+      ...(newUrl && { url: newUrl }),
     };
 
     this.saveLibrary(updated);

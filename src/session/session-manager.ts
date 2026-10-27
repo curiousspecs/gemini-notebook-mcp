@@ -16,6 +16,7 @@ import type { AuthManager } from "../auth/auth-manager.js";
 import { BrowserSession } from "./browser-session.js";
 import { SharedContextManager } from "./shared-context-manager.js";
 import { CONFIG } from "../config.js";
+import { assertNotebookUrl } from "../gemini-notebook/url.js";
 import { log } from "../utils/logger.js";
 import type { SessionInfo } from "../types.js";
 import { randomBytes } from "crypto";
@@ -69,13 +70,13 @@ export class SessionManager {
     overrideHeadless?: boolean
   ): Promise<BrowserSession> {
     // Determine target notebook URL
-    const targetUrl = (notebookUrl || CONFIG.notebookUrl || "").trim();
-    if (!targetUrl) {
+    const rawUrl = (notebookUrl || CONFIG.notebookUrl || "").trim();
+    if (!rawUrl) {
       throw new Error("Notebook URL is required to create a session");
     }
-    if (!targetUrl.startsWith("http")) {
-      throw new Error("Notebook URL must be an absolute URL");
-    }
+    // Single chokepoint: only https notebook.google.com / notebooklm.google.com
+    // notebook URLs may ever become a browser navigation target.
+    const targetUrl = assertNotebookUrl(rawUrl);
 
     // Generate ID if not provided
     if (!sessionId) {
