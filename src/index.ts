@@ -40,6 +40,7 @@ import { applyAccountToConfig, getRequestedAccount } from "./auth/account-switch
 import { SessionManager } from "./session/session-manager.js";
 import { NotebookLibrary } from "./library/notebook-library.js";
 import { ToolHandlers, buildToolDefinitions } from "./tools/index.js";
+import { parseToolArgs } from "./tools/schemas.js";
 import { ResourceHandlers } from "./resources/resource-handlers.js";
 import { SettingsManager } from "./utils/settings-manager.js";
 import { CliHandler } from "./utils/cli-handler.js";
@@ -240,11 +241,13 @@ class GeminiNotebookMCPServer {
 
       try {
         let result;
+        // Reject malformed arguments with a clear error before any handler runs
+        const parsedArgs = parseToolArgs(name, args);
 
         switch (name) {
           case "ask_question":
             result = await this.toolHandlers.handleAskQuestion(
-              args as {
+              parsedArgs as {
                 question: string;
                 session_id?: string;
                 notebook_id?: string;
@@ -258,7 +261,7 @@ class GeminiNotebookMCPServer {
 
           case "add_notebook":
             result = await this.toolHandlers.handleAddNotebook(
-              args as {
+              parsedArgs as {
                 url: string;
                 name: string;
                 description: string;
@@ -275,16 +278,16 @@ class GeminiNotebookMCPServer {
             break;
 
           case "get_notebook":
-            result = await this.toolHandlers.handleGetNotebook(args as { id: string });
+            result = await this.toolHandlers.handleGetNotebook(parsedArgs as { id: string });
             break;
 
           case "select_notebook":
-            result = await this.toolHandlers.handleSelectNotebook(args as { id: string });
+            result = await this.toolHandlers.handleSelectNotebook(parsedArgs as { id: string });
             break;
 
           case "update_notebook":
             result = await this.toolHandlers.handleUpdateNotebook(
-              args as {
+              parsedArgs as {
                 id: string;
                 name?: string;
                 description?: string;
@@ -298,11 +301,11 @@ class GeminiNotebookMCPServer {
             break;
 
           case "remove_notebook":
-            result = await this.toolHandlers.handleRemoveNotebook(args as { id: string });
+            result = await this.toolHandlers.handleRemoveNotebook(parsedArgs as { id: string });
             break;
 
           case "search_notebooks":
-            result = await this.toolHandlers.handleSearchNotebooks(args as { query: string });
+            result = await this.toolHandlers.handleSearchNotebooks(parsedArgs as { query: string });
             break;
 
           case "get_library_stats":
@@ -314,11 +317,15 @@ class GeminiNotebookMCPServer {
             break;
 
           case "close_session":
-            result = await this.toolHandlers.handleCloseSession(args as { session_id: string });
+            result = await this.toolHandlers.handleCloseSession(
+              parsedArgs as { session_id: string }
+            );
             break;
 
           case "reset_session":
-            result = await this.toolHandlers.handleResetSession(args as { session_id: string });
+            result = await this.toolHandlers.handleResetSession(
+              parsedArgs as { session_id: string }
+            );
             break;
 
           case "get_health":
@@ -327,25 +334,25 @@ class GeminiNotebookMCPServer {
 
           case "setup_auth":
             result = await this.toolHandlers.handleSetupAuth(
-              args as { show_browser?: boolean },
+              parsedArgs as { show_browser?: boolean },
               sendProgress
             );
             break;
 
           case "re_auth":
             result = await this.toolHandlers.handleReAuth(
-              args as { show_browser?: boolean },
+              parsedArgs as { show_browser?: boolean },
               sendProgress
             );
             break;
 
           case "cleanup_data":
-            result = await this.toolHandlers.handleCleanupData(args as { confirm: boolean });
+            result = await this.toolHandlers.handleCleanupData(parsedArgs as { confirm: boolean });
             break;
 
           case "add_source":
             result = await this.toolHandlers.handleAddSource(
-              args as {
+              parsedArgs as {
                 type: "url" | "text";
                 content: string;
                 title?: string;
@@ -358,7 +365,7 @@ class GeminiNotebookMCPServer {
 
           case "generate_audio":
             result = await this.toolHandlers.handleGenerateAudio(
-              args as {
+              parsedArgs as {
                 custom_prompt?: string;
                 timeout_ms?: number;
                 wait_for_completion?: boolean;
@@ -372,7 +379,7 @@ class GeminiNotebookMCPServer {
 
           case "get_audio_status":
             result = await this.toolHandlers.handleGetAudioStatus(
-              args as {
+              parsedArgs as {
                 session_id?: string;
                 notebook_id?: string;
                 notebook_url?: string;
@@ -383,7 +390,7 @@ class GeminiNotebookMCPServer {
 
           case "download_audio":
             result = await this.toolHandlers.handleDownloadAudio(
-              args as {
+              parsedArgs as {
                 destination_dir: string;
                 session_id?: string;
                 notebook_id?: string;
