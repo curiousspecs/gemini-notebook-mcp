@@ -47,6 +47,7 @@ import { CliHandler } from "./utils/cli-handler.js";
 import { CONFIG, ensureDirectories } from "./config.js";
 import { startHttpTransport } from "./transport/http.js";
 import { log } from "./utils/logger.js";
+import { watchStdinClose } from "./utils/stdin-shutdown.js";
 
 /**
  * Server-level instructions consumed by MCP clients during initialization.
@@ -148,6 +149,7 @@ class GeminiNotebookMCPServer {
   private resourceHandlers: ResourceHandlers;
   private settingsManager: SettingsManager;
   private toolDefinitions: Tool[];
+  private requestShutdown: (signal: string) => void = () => {};
 
   constructor() {
     // Initialize MCP Server
@@ -490,6 +492,7 @@ class GeminiNotebookMCPServer {
     const requestShutdown = (signal: string) => {
       void shutdown(signal);
     };
+    this.requestShutdown = requestShutdown;
 
     process.on("SIGINT", () => requestShutdown("SIGINT"));
     process.on("SIGTERM", () => requestShutdown("SIGTERM"));
@@ -535,6 +538,9 @@ class GeminiNotebookMCPServer {
     } else {
       const transport = new StdioServerTransport();
       await this.server.connect(transport);
+      // stdio only: the client closing the pipe is the disconnect signal.
+      // (Under HTTP a closed or /dev/null stdin is normal and must not stop us.)
+      watchStdinClose(process.stdin, (reason) => this.requestShutdown(reason));
       log.success("✅ MCP Server connected via stdio");
     }
 
